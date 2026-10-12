@@ -1,89 +1,91 @@
 # 01. Android Architecture
 
-## Definition
+Android is an open-source, Linux-based software stack for mobile devices. It is organised into **layers**, where each layer provides services to the layer above it and hides the complexity of the layer below.
 
-Android architecture is a **layered software stack**. Each layer provides services to the layer above it and relies on the layer below it. Our course divides it into five layers (top to bottom):
-
-1. System apps | User apps
-2. Java API Framework
-3. Native C/C++ Libraries | Android Runtime
-4. Hardware Abstraction Layer (HAL)
-5. Linux Kernel
-
-## Diagram
+## Architecture Diagram
 
 ```
-+----------------------------------------------------------------+
-|  LAYER 5                                                       |
-|  +-------------------------+  +------------------------------+ |
-|  |       SYSTEM APPS       |  |          USER APPS           | |
-|  | Dialer, Contacts,       |  | Weather app, WhatsApp,       | |
-|  | Camera, Settings,       |  | your own apps ...            | |
-|  | Browser                 |  |                              | |
-|  +-------------------------+  +------------------------------+ |
-+----------------------------------------------------------------+
-|  LAYER 4: JAVA API FRAMEWORK                                   |
-|  Activity Manager | Window Manager | View System               |
-|  Content Providers | Notification Manager | Package Manager    |
-|  Resource Manager | Location Manager | Telephony Manager       |
-+----------------------------------------------------------------+
-|  LAYER 3                                                       |
-|  +-------------------------------+ +-------------------------+ |
-|  | NATIVE C/C++ LIBRARIES        | | ANDROID RUNTIME         | |
-|  | Media Framework, SQLite,      | | ART (Android 5.0+)      | |
-|  | OpenGL ES, WebKit, SSL,       | | Core Libraries          | |
-|  | libc, Surface Manager         | | (Dalvik before 5.0)     | |
-|  +-------------------------------+ +-------------------------+ |
-+----------------------------------------------------------------+
-|  LAYER 2: HARDWARE ABSTRACTION LAYER (HAL)                     |
-|  Audio | Bluetooth | Camera | Sensors | Display modules        |
-+----------------------------------------------------------------+
-|  LAYER 1: LINUX KERNEL                                         |
-|  Display / Camera / Bluetooth / Audio / WiFi / USB drivers     |
-|  Binder IPC | Memory mgmt | Process mgmt | Power mgmt | Security|
-+----------------------------------------------------------------+
-|                           HARDWARE                             |
-+----------------------------------------------------------------+
++-----------------------------------------------------------+
+| LAYER 5   SYSTEM APPS            |        USER APPS       |
+|           (Dialer, SMS, Camera,  |  (WhatsApp, Games,     |
+|            Contacts, Browser)    |   Banking apps ...)    |
++-----------------------------------------------------------+
+| LAYER 4   JAVA API FRAMEWORK                              |
+|   Activity Mgr | Content Providers | View System          |
+|   Resource Mgr | Notification Mgr  | Location Mgr         |
+|   Package Mgr  | Telephony Mgr     | Window Mgr           |
++-----------------------------------------------------------+
+| LAYER 3   NATIVE C/C++ LIBRARIES | ANDROID RUNTIME (ART)  |
+|   SQLite, OpenGL ES, WebKit,     |  Core Java libraries   |
+|   SSL, libc, Media Framework,    |  Ahead-of-time (AOT)   |
+|   Surface Manager, FreeType      |  + JIT compilation     |
++-----------------------------------------------------------+
+| LAYER 2   HARDWARE ABSTRACTION LAYER (HAL)                |
+|   Audio | Bluetooth | Camera | Sensors | Display | WiFi    |
++-----------------------------------------------------------+
+| LAYER 1   LINUX KERNEL                                    |
+|   Drivers | Memory Mgmt | Process Mgmt | Power Mgmt |      |
+|   Security | Binder IPC                                   |
++-----------------------------------------------------------+
+                         HARDWARE
 ```
 
-Reference: [GeeksforGeeks, Android Architecture](https://www.geeksforgeeks.org/android/android-architecture/) (their diagram groups the layers slightly differently, but the components are the same).
+## Layer 5: System Apps | User Apps
+- The topmost layer, which the user directly interacts with.
+- **System apps** come pre-installed with the OS (Phone, Contacts, Messages, Camera, Settings, Browser, Email).
+- **User apps** are installed by the user from the Play Store or other sources.
+- All apps are written using the APIs of Layer 4 and run in their own sandbox/process.
+- Any app can be replaced (e.g. a third-party keyboard or launcher can replace the default).
 
-## What each layer does
+## Layer 4: Java API Framework
+The set of Java/Kotlin APIs that app developers use. It exposes the Android features as reusable services and components.
 
-| Layer | Purpose | Key components |
-|---|---|---|
-| **System apps / User apps** | Apps the user sees and installs | System apps: Dialer, Contacts, Camera, Settings. User apps: any app installed by the user, including the ones you build |
-| **Java API Framework** | The Java/Kotlin APIs that apps call; manages app behaviour and system services | Activity Manager (activity lifecycle), Window Manager, View System (UI widgets), Content Providers (share data between apps), Notification Manager, Package Manager |
-| **Native C/C++ Libraries** | Performance-critical native code used by the framework | Media framework, SQLite (database), OpenGL ES (graphics), WebKit (browser engine), SSL, libc |
-| **Android Runtime (ART)** | Executes app code | ART + core Java libraries. ART compiles apps ahead of time (AOT) |
-| **Hardware Abstraction Layer (HAL)** | Standard interfaces that let the framework talk to hardware without knowing driver details | Audio, Bluetooth, camera, sensor HAL modules |
-| **Linux Kernel** | Drivers, memory, process and power management, security | Display, camera, Bluetooth, audio, WiFi drivers; Binder IPC |
+| Component | Purpose |
+|---|---|
+| Activity Manager | Manages the lifecycle of activities and the back stack |
+| Content Providers | Let apps share data with each other (e.g. contacts) |
+| View System | Builds the UI: buttons, lists, text boxes, layouts, etc. |
+| Resource Manager | Gives access to non-code resources: strings, images, layouts |
+| Notification Manager | Lets apps show alerts in the status bar |
+| Location Manager | Provides GPS/location updates |
+| Package Manager | Knows which apps are installed, their permissions and components |
+| Telephony Manager | Information about phone services, calls, SIM |
+| Window Manager | Manages windows and screen display |
 
-## Key points
+## Layer 3: Native C/C++ Libraries | Android Runtime
+### Native C/C++ Libraries
+Performance-critical code written in C/C++, exposed to the framework through Java interfaces (JNI):
+- **SQLite** - lightweight database for local storage
+- **OpenGL ES** - 2D/3D graphics rendering
+- **WebKit** - browser engine used by WebView
+- **SSL** - secure communication
+- **libc** - standard C library (Bionic)
+- **Media Framework** - audio/video playback and recording
+- **Surface Manager** - composes the drawing surfaces onto the display
+- **FreeType** - font rendering
 
-- **Linux Kernel** is the foundation. Android is built on it.
-- **Libraries and Android Runtime** share one layer. Libraries are written in C/C++; the runtime runs the app's compiled code.
-- **ART replaced Dalvik** from Android 5.0 (Lollipop).
-- **HAL** sits between the kernel and the layers above, so the same framework can work with different manufacturers' hardware.
-- Each layer only talks to the layer directly above and below it.
+### Android Runtime (ART)
+- Executes app code. Every app runs in its own process with its own instance of the runtime.
+- Converts the app's bytecode (DEX files) into machine code.
+- **ART** replaced the older **Dalvik VM** (from Android 5.0 Lollipop). It uses **AOT (Ahead-Of-Time)** compilation at install time plus JIT and profile-guided compilation, giving faster startup and better battery life.
+- Includes **Core Libraries**: the Java libraries (java.lang, java.util, java.io, etc.) that apps use.
+- Also provides garbage collection and debugging support.
 
-## Example: a weather app
+## Layer 2: Hardware Abstraction Layer (HAL)
+- Provides standard interfaces that expose device hardware capabilities to the higher-level Java API framework.
+- Consists of library modules, one for each hardware type (camera, audio, Bluetooth, sensors).
+- When the framework asks for a hardware feature, the HAL loads the right module for that hardware.
+- Benefit: the upper layers stay the same regardless of the manufacturer's hardware.
 
-| Task | Layer | Why |
-|---|---|---|
-| Displaying the temperature on screen | **User apps** | The visible screen is the weather app itself (built using the framework's View System/TextView). |
-| Managing the app's Activity lifecycle (start, pause, destroy) | **Java API Framework** | The Activity Manager in this layer creates, pauses and destroys activities and calls their callbacks. |
-| Running the app's code with ART | **Native C/C++ Libraries / Android Runtime** | ART executes the compiled app code. |
-| Reading the phone's temperature sensor | **HAL** (then Linux Kernel driver) | The HAL gives the framework a standard sensor interface; the kernel driver talks to the hardware. |
+## Layer 1: Linux Kernel
+- The foundation of the whole platform.
+- Provides the **device drivers** (display, camera, keypad, WiFi, audio, Bluetooth, USB, flash memory).
+- Handles **memory management**, **process management**, **power management**, **networking** and **security**.
+- Includes **Binder IPC** for inter-process communication.
+- Android modified the standard Linux kernel (wakelocks, low-memory killer, Binder, etc.).
 
-## Common confusions
-
-- **ART** belongs to the *Android Runtime* part of Layer 3, not the Java API Framework.
-- **Activity Manager** is in the *Java API Framework*, not in the libraries.
-- **SQLite** is a native library; **Binder** is part of the kernel layer.
-- Android is based on the **Linux kernel**, not Windows, Darwin or BSD.
-
-## Quick summary
-
-- Bottom to top: Linux Kernel → HAL → (Native Libraries | ART) → Java API Framework → (System apps | User apps).
-- Drivers → Kernel. Activity Manager → Framework. ART → Runtime. Your app → User apps.
+## Key Points
+- Five layers (top to bottom): Apps -> Java API Framework -> Native Libraries + ART -> HAL -> Linux Kernel.
+- Developers work mostly at Layers 4 and 5.
+- Layer 3 is split side-by-side into native libraries and the runtime.
+- The kernel is the only layer that talks directly to hardware (through drivers).

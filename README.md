@@ -1,43 +1,38 @@
-# Mobile App Development (Android) Notes
+# Android (MAD) Notes
 
-Course notes for Mobile Application Development using **Java + XML**. Each topic is a separate file, so you can read them in order or jump to the one you need.
+Theory notes for Mobile Application Development (Android, Java + XML). Each topic is in its own file, so you can read them one by one in order.
 
 ## Contents
 
-| # | Topic | What it covers |
+| # | File | Topic |
 |---|---|---|
-| 01 | [Android Architecture](01_architecture.md) | The five layers, their components, example |
-| 02 | [Types of Layouts](02_layouts.md) | Linear, Constraint, Frame, Relative, Table, Grid, Coordinator |
-| 03 | [LinearLayout](03_linearlayout.md) | Attributes, gravity vs layout_gravity, layout_weight maths |
-| 04 | [Responsive Layouts](04_responsive_layouts.md) | ScrollView, landscape layouts, resource qualifiers |
-| 05 | [Intents](05_intents.md) | Explicit and implicit intents, extras, code examples |
-| 06 | [Intent Filters](06_intent_filters.md) | Declaring filters in the manifest, how matching works |
-| 07 | [Activity Lifecycle](07_activity_lifecycle.md) | Callbacks, diagram, common sequences |
-| 08 | [Services](08_services.md) | Started, bound and foreground services, lifecycle |
-| 09 | [RecyclerView and ListView](09_recyclerview_listview.md) | Adapter, ViewHolder, LayoutManager, comparison |
-| 10 | [ImageView](10_imageview.md) | Attributes, scaleType, changing images in code |
-| 11 | [Practice Questions](11_practice_questions.md) | MCQs, short answers, scenarios, code, with answers |
-| 12 | [Quick Revision](12_quick_revision.md) | One-page summary of everything |
+| 01 | [01_architecture.md](01_architecture.md) | Android architecture (5 layers) |
+| 02 | [02_layout_types.md](02_layout_types.md) | Layout types |
+| 03 | [03_linear_layout.md](03_linear_layout.md) | LinearLayout |
+| 04 | [04_responsiveness_of_linear_layout.md](04_responsiveness_of_linear_layout.md) | Responsiveness of LinearLayout |
+| 05 | [05_image_view.md](05_image_view.md) | ImageView |
+| 06 | [06_intent.md](06_intent.md) | Intent |
+| 07 | [07_types_of_intent.md](07_types_of_intent.md) | Types of Intent |
+| 08 | [08_intent_filter.md](08_intent_filter.md) | Intent Filter |
+| 09 | [09_activity.md](09_activity.md) | Activity |
+| 10 | [10_activity_lifecycle.md](10_activity_lifecycle.md) | Activity Lifecycle |
+| 11 | [11_services.md](11_services.md) | Services |
+| 12 | [12_types_of_services.md](12_types_of_services.md) | Types of Services |
+| 13 | [13_service_lifecycle.md](13_service_lifecycle.md) | Service Lifecycle |
+| 14 | [14_recycler_view.md](14_recycler_view.md) | RecyclerView |
+| 15 | [15_recyclerview_vs_listview.md](15_recyclerview_vs_listview.md) | RecyclerView vs ListView |
 
-## How to use these notes
+## How to Use
+- Open any `.md` file on GitHub (or in VS Code with Markdown preview) to read it formatted.
+- Files are numbered in a sensible learning order: UI first (layouts, views), then components (intents, activities, services), then lists.
+- Diagrams are written in plain text so they render everywhere; view them in a monospace font.
 
-- **Learning a topic:** read the file top to bottom. Each one follows the same pattern: definition, how it works, code example, common mistakes, quick summary.
-- **Revising:** read the "Quick summary" at the end of each file, then use `12_quick_revision.md`.
-- **Testing yourself:** try `11_practice_questions.md` before checking the answers.
-- **Code:** examples are in Java and XML. Try them in Android Studio rather than only reading them. The weight examples in `03_linearlayout.md` are good ones to test.
-
-## Notes
-
-- The architecture in `01_architecture.md` follows the five-layer version taught in our course.
-- Some details change between Android versions (for example foreground service permissions and `IntentService` being deprecated). Where this matters, the file says so, with a link to the official docs.
-- Reference links point to the official [Android Developers](https://developer.android.com) documentation and [GeeksforGeeks](https://www.geeksforgeeks.org/android/android-architecture/).
-
-## Contributing
-
-Found a mistake or want to add something?
-
-1. Fork the repo and create a branch.
-2. Edit the relevant `.md` file (keep the same structure: definition, example, common mistakes, quick summary).
-3. Open a pull request with a short description of the change.
-
-New topics: use the next number, e.g. `13_fragments.md`, and add a row to the table above.
+## Pushing to GitHub
+```bash
+git init
+git add .
+git commit -m "Add Android notes"
+git branch -M main
+git remote add origin https://github.com/<username>/<repo>.git
+git push -u origin main
+```
